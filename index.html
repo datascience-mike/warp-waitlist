@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warp · Early access</title>
+<meta name="description" content="A map of what's happening near you, with a shared photo album for everyone who was there. Join the waitlist for early access.">
+<meta property="og:title" content="Warp: find the night, keep the photos">
+<meta property="og:description" content="A map of local events with a shared photo album for everyone who was there. Join the waitlist.">
+<meta property="og:image" content="assets/map.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ---- Brand: everything that will change with the rebrand lives in these tokens ---- */
+:root {
+  --ground: #fbfaf6;
+  --ink: #12261e;
+  --ink-soft: #51625a;
+  --accent: #ff6b2c;      /* buttons, highlights */
+  --accent-ink: #ffffff;
+  --lime: #c4f25a;        /* secondary highlight */
+  --card: #ffffff;
+  --line: #e3e6df;
+  --display: 'Bricolage Grotesque', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  --body: 'DM Sans', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+html, body { overflow-x: clip; }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 17px/1.55 var(--body); -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+.wrap { width: min(1080px, 100% - 40px); margin: 0 auto; }
+
+/* top bar */
+.bar { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+.mark { font: 800 26px/1 var(--display); letter-spacing: -.03em; text-decoration: none; }
+.mark span { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); margin-left: 3px; transform: translateY(-1px); }
+.pill { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; background: var(--lime); }
+
+/* hero */
+.hero { display: grid; gap: 28px; padding: 18px 0 56px; align-items: center; }
+h1 { font: 800 clamp(40px, 9vw, 76px)/.98 var(--display); letter-spacing: -.035em; margin: 0 0 18px; text-wrap: balance; }
+h1 em { font-style: normal; background: linear-gradient(transparent 62%, var(--lime) 62% 92%, transparent 92%); }
+.lede { font-size: clamp(18px, 2.4vw, 21px); color: var(--ink-soft); max-width: 34ch; margin: 0 0 26px; }
+.btn { display: inline-block; font: 700 18px/1 var(--body); padding: 17px 26px; border-radius: 14px; background: var(--accent); color: var(--accent-ink); text-decoration: none; border: 0; cursor: pointer; box-shadow: 0 6px 0 #c94d17; transition: transform .12s, box-shadow .12s; }
+.btn:hover { transform: translateY(2px); box-shadow: 0 4px 0 #c94d17; }
+.btn:active { transform: translateY(6px); box-shadow: 0 0 0 #c94d17; }
+.btn:focus-visible, input:focus-visible, label:focus-within { outline: 3px solid var(--ink); outline-offset: 3px; }
+.fine { font-size: 14px; color: var(--ink-soft); margin-top: 14px; }
+
+/* phones */
+.phone { width: min(260px, 62vw); aspect-ratio: 640 / 1295; border-radius: 38px; background: #0d1512; padding: 9px; box-shadow: 0 30px 60px -20px rgba(18,38,30,.45), 0 0 0 1px rgba(0,0,0,.08); position: relative; }
+.phone::before { content: ""; position: absolute; top: 15px; left: 50%; width: 30%; height: 18px; border-radius: 999px; background: #0d1512; transform: translateX(-50%); z-index: 2; }
+.phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 30px; }
+.stage { position: relative; display: flex; justify-content: center; min-height: 430px; overflow: hidden; padding-bottom: 8px; }
+.stage .phone:nth-child(1) { position: relative; z-index: 2; }
+.stage .phone:nth-child(2) { position: absolute; width: min(220px, 52vw); left: calc(50% + 70px); top: 46px; transform: rotate(7deg); z-index: 1; }
+.stage .phone:nth-child(3) { position: absolute; width: min(220px, 52vw); right: calc(50% + 70px); top: 46px; transform: rotate(-7deg); z-index: 1; display: none; }
+
+/* feature rows */
+.rows { display: grid; gap: 64px; padding: 24px 0 64px; }
+.row { display: grid; gap: 22px; align-items: center; justify-items: center; text-align: center; }
+.row h2 { font: 800 clamp(28px, 5vw, 42px)/1.05 var(--display); letter-spacing: -.03em; margin: 0 0 10px; text-wrap: balance; }
+.row p { margin: 0 auto; color: var(--ink-soft); max-width: 38ch; }
+.row .tag { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+
+/* audiences */
+.who { background: var(--ink); color: #fff; padding: 56px 0; }
+.who h2 { font: 800 clamp(28px, 5vw, 40px)/1.05 var(--display); letter-spacing: -.03em; margin: 0 0 8px; }
+.who .sub { color: #b8c7bf; margin: 0 0 28px; max-width: 48ch; }
+.cards { display: grid; gap: 14px; }
+.cardx { border: 1px solid #2c4a3d; border-radius: 18px; padding: 20px; }
+.cardx b { display: block; font: 700 20px/1.2 var(--display); margin-bottom: 4px; }
+.cardx span { color: #b8c7bf; font-size: 16px; }
+
+/* form */
+.join { padding: 64px 0 72px; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 26px; padding: clamp(22px, 5vw, 44px); box-shadow: 0 24px 50px -30px rgba(18,38,30,.35); max-width: 620px; margin: 0 auto; }
+.panel h2 { font: 800 clamp(30px, 6vw, 44px)/1.02 var(--display); letter-spacing: -.035em; margin: 0 0 8px; }
+.panel > p { color: var(--ink-soft); margin: 0 0 24px; }
+label.f { display: block; font-weight: 700; font-size: 15px; margin: 0 0 16px; }
+label.f small { font-weight: 500; color: var(--ink-soft); }
+input[type=text], input[type=email] { display: block; width: 100%; margin-top: 6px; padding: 14px 14px; font: 500 17px var(--body); color: var(--ink); background: #fff; border: 2px solid var(--line); border-radius: 12px; }
+input[type=text]:focus, input[type=email]:focus { border-color: var(--ink); outline: none; }
+fieldset { border: 0; padding: 0; margin: 0 0 20px; }
+legend { font-weight: 700; font-size: 15px; padding: 0; margin-bottom: 8px; }
+.opts { display: grid; gap: 8px; }
+.opt { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border: 2px solid var(--line); border-radius: 12px; cursor: pointer; font-weight: 500; }
+.opt input { accent-color: var(--accent); width: 18px; height: 18px; margin: 0; }
+.opt:has(input:checked) { border-color: var(--ink); background: #f3f7ee; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.panel .btn { width: 100%; text-align: center; }
+.note { font-size: 14px; color: var(--ink-soft); margin: 14px 0 0; }
+#msg { margin-top: 16px; padding: 14px 16px; border-radius: 12px; font-weight: 500; display: none; }
+#msg.ok { display: block; background: #e8f8c9; }
+#msg.err { display: block; background: #ffe3d9; }
+#msg.demo { display: block; background: #eef0ff; }
+
+/* survey */
+.survey { max-width: 620px; margin: 22px auto 0; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 20px 24px; border-radius: 20px; background: var(--lime); }
+.survey b { display: block; font: 800 22px/1.15 var(--display); letter-spacing: -.02em; }
+.survey span { font-size: 16px; }
+.survey a { font-weight: 700; padding: 13px 20px; border-radius: 12px; background: var(--ink); color: #fff; text-decoration: none; white-space: nowrap; }
+.survey a:hover { background: #000; }
+.survey a:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.survey[hidden], .linkrow[hidden] { display: none; }
+.linkrow a { font-weight: 700; }
+
+footer { padding: 28px 0 44px; color: var(--ink-soft); font-size: 14px; border-top: 1px solid var(--line); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+@media (min-width: 820px) {
+  body { font-size: 18px; }
+  .hero { grid-template-columns: 1.05fr .95fr; gap: 40px; padding-top: 36px; }
+  .stage { min-height: 560px; }
+  .phone { width: 290px; }
+  .stage .phone:nth-child(2) { width: 250px; left: calc(50% + 90px); top: 70px; }
+  .stage .phone:nth-child(3) { display: block; width: 250px; right: calc(50% + 90px); top: 70px; }
+  .row { grid-template-columns: 1fr 1fr; gap: 56px; text-align: left; justify-items: stretch; }
+  .row p { margin: 0; }
+  .row:nth-child(even) .copy { order: 2; }
+  .row .phone { justify-self: center; }
+  .cards { grid-template-columns: repeat(3, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="bar">
+    <a class="mark" href="#top" aria-label="Warp home">Warp<span></span></a>
+    <span class="pill">Early access</span>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div>
+        <h1>Find the night. <em>Keep the photos.</em></h1>
+        <p class="lede">A map of what's happening near you, with one shared photo album for everyone who was there.</p>
+        <a class="btn" href="#join">Join the waitlist</a>
+        <p class="fine">Free to download. Be one of the first members.</p>
+        <p class="fine linkrow" data-survey hidden>Or <a href="#" data-survey-link>take our 2-minute survey</a> and tell us what you'd want.</p>
+      </div>
+      <div class="stage" aria-hidden="true">
+        <div class="phone"><img src="assets/map.jpg" alt="" width="640" height="1295"></div>
+        <div class="phone"><img src="assets/album.jpg" alt="" width="640" height="1295"></div>
+        <div class="phone"><img src="assets/list.jpg" alt="" width="640" height="1295"></div>
+      </div>
+    </section>
+
+    <section class="rows" aria-label="What the app does">
+      <div class="row">
+        <div class="copy">
+          <span class="tag">Discover</span>
+          <h2>See what's happening nearby</h2>
+          <p>Open the map and find local events, hangouts and photo albums around you. Tap one to see what it's about and join in.</p>
+        </div>
+        <div class="phone"><img src="assets/map.jpg" alt="The Warp map showing albums and events around Boston" loading="lazy" width="640" height="1295"></div>
+      </div>
+      <div class="row">
+        <div class="copy">
+          <span class="tag">Share</span>
+          <h2>One album for the whole crowd</h2>
+          <p>Everyone adds their photos at full quality, and everyone sees everyone's. Guests can join by scanning a QR code. No account needed.</p>
+        </div>
+        <div class="phone"><img src="assets/album.jpg" alt="A shared photo album with everyone's photos in one grid" loading="lazy" width="640" height="1295"></div>
+      </div>
+      <div class="row">
+        <div class="copy">
+          <span class="tag">Control</span>
+          <h2>Hosts stay in charge</h2>
+          <p>Albums are private by default. Hosts can approve photos before they appear, remove anything, and anyone can report or block. Your event, your rules.</p>
+        </div>
+        <div class="phone"><img src="assets/review.jpg" alt="The host's screen for approving photos before they appear" loading="lazy" width="640" height="1295"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<section class="who">
+  <div class="wrap">
+    <h2>Made for the people who make nights happen</h2>
+    <p class="sub">Free for guests and attendees. We're shaping the host tools with our first members, so tell us how you'd use it.</p>
+    <div class="cards">
+      <div class="cardx"><b>Going out</b><span>Find something to do tonight, and get the photos from it afterwards.</span></div>
+      <div class="cardx"><b>Hosting events</b><span>Run a party, a meetup or a team night with one place for everyone's photos.</span></div>
+      <div class="cardx"><b>Local business</b><span>Bars, cafés and venues: get your events in front of people nearby.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="join" id="join">
+  <div class="wrap">
+    <div class="panel">
+      <h2>Get early access</h2>
+      <p>Join the waitlist and we'll email you when it's your turn. First members help shape what we build.</p>
+      <form id="f" novalidate>
+        <label class="f">Email
+          <input type="email" name="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+        </label>
+        <label class="f">First name <small>(optional)</small>
+          <input type="text" name="name" autocomplete="given-name" placeholder="Alex">
+        </label>
+        <fieldset>
+          <legend>I'd use it for</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="role" value="Going out" checked> Going out and finding events</label>
+            <label class="opt"><input type="radio" name="role" value="Hosting"> Hosting events</label>
+            <label class="opt"><input type="radio" name="role" value="Business"> My business or venue</label>
+          </div>
+        </fieldset>
+        <label class="f">Town or ZIP <small>(optional, so we know where to start)</small>
+          <input type="text" name="city" autocomplete="postal-code" placeholder="Hometown or ZIP">
+        </label>
+        <div class="hp" aria-hidden="true"><label>Company <input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
+        <button class="btn" type="submit" id="go">Join the waitlist</button>
+        <p class="note">We'll only email you about launch. No spam, and you can ask us to remove you any time.</p>
+        <div id="msg" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+    <div class="survey" data-survey hidden>
+      <div><b>Help us build the right thing</b><span>Our short survey takes about two minutes.</span></div>
+      <a href="#" data-survey-link target="_blank" rel="noopener">Take the survey</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Early preview. Screens are from a work in progress; features and the name may change.</span>
+    <span>Questions? <a href="mailto:hello@example.com" id="contact">hello@example.com</a></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Paste the Web app URL from Google Apps Script here (see README.md). Until then the form runs in demo mode.
+  var SCRIPT_URL = '';
+  // The survey address (a Google Form link, for example). Leave empty to hide the survey links.
+  var SURVEY_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfLYosaEH65T5SCB5uckZvTSav4YUcBXQ0AYFoWPCtwu_OMIw/viewform?usp=sharing&ouid=108488703369436680827';
+  // Shown in the footer. Replace with a real address.
+  var CONTACT = 'hello@example.com';
+
+  var c = document.getElementById('contact');
+  c.href = 'mailto:' + CONTACT; c.textContent = CONTACT;
+
+  if (SURVEY_URL) {
+    document.querySelectorAll('[data-survey-link]').forEach(function (a) { a.href = SURVEY_URL; a.target = '_blank'; a.rel = 'noopener'; });
+    document.querySelectorAll('[data-survey]').forEach(function (el) { el.hidden = false; });
+  }
+
+  var params = new URLSearchParams(location.search);
+  var source = (params.get('s') || params.get('src') || 'direct').slice(0, 40);
+
+  var form = document.getElementById('f'), msg = document.getElementById('msg'), go = document.getElementById('go');
+  function say(kind, text) { msg.className = kind; msg.textContent = text; }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var d = new FormData(form);
+    var email = String(d.get('email') || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { say('err', 'That email doesn’t look right. Please check it and try again.'); form.email.focus(); return; }
+    if (d.get('company')) { say('ok', 'You’re on the list.'); return; }   // a bot filled the hidden field
+
+    if (!SCRIPT_URL) { say('demo', 'Sign-ups aren’t open quite yet, so nothing was saved. Please check back soon.'); return; }
+
+    go.disabled = true; go.textContent = 'Saving…';
+    var body = new URLSearchParams({
+      email: email, name: String(d.get('name') || '').trim(), role: String(d.get('role') || ''),
+      city: String(d.get('city') || '').trim(), source: source
+    });
+    // Apps Script answers with a redirect that browsers won't let a page read, so "no-cors" and trust a delivered request.
+    fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: body })
+      .then(function () {
+        form.reset(); form.querySelector('input[value="Going out"]').checked = true;
+        say('ok', 'You’re on the list! We’ll email you when it’s your turn.' + (SURVEY_URL ? ' While you’re here, the survey below helps us a lot.' : ''));
+      })
+      .catch(function () { say('err', 'Something went wrong. Check your connection and try again.'); })
+      .then(function () { go.disabled = false; go.textContent = 'Join the waitlist'; });
+  });
+})();
+</script>
+</body>
+</html>
